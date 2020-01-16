@@ -23,7 +23,7 @@ determine hook positioning are sensitive to ambient light and distance to the po
 detected. The hook positioning may be improved by implementing systemic changes
 that enable the utilization of the more robust break beam sensors.
 ## Code Introduction
-There are two parts of the code. `integrate_new.X` includes codes for PIC18F2550 and other peripherals on its develop board, which was designed for this course project.
+There are two parts of the code. `PIC` includes codes for PIC18F2550 and other peripherals on its develop board, which was designed for this course project. `run.c` contains the main function.
 PIC is the main controller of the robot and responsible for driving and deploying controls using DC and Stepper motors, the main algorithm of the robot, and user interface through I/O devices.
-Another part `runFin` is for Arduino Nano, which receives information from IR sensors, detects the number of tires and position of poles, and then sends back to PIC.
+Another part `Arduino` is for Arduino Nano, which receives information from IR sensors, detects the number of tires and position of poles, and then sends back to PIC.
 `Document` includes project documentations for the client.
