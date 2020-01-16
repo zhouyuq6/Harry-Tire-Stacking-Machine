@@ -1,0 +1,61 @@
+//pwm setting
+void initPWM(void){
+    pwm_val = startPWM;
+    ADCON1 = 0b00001111;
+    //interrupt configuration
+    INT1IE = 1;
+    ei(); 
+    // Disable output from PWM pin while we are setting up PWM
+    TRISCbits.TRISC1 = 1;
+    TRISCbits.TRISC2 = 1;
+    // Configure PWM frequency, 5 kHz.
+    PR2 = (_XTAL_FREQ/(PWM_freq*4*TMR2PRESCALE)) - 1;
+    
+    // Configure CCP1CON, single output mode, all active high
+    CCP1M3 = 1;
+    CCP1M2 = 1;
+    CCP1M1 = 0;
+    CCP1M0 = 0;
+    //Similar for CCP2CON
+    CCP2M3 = 1;
+    CCP2M2 = 1;
+    CCP2M1 = 0;
+    CCP2M0 = 0;
+
+    // Set timer 2 prescaler to 4
+    T2CKPS0 = 0;
+    T2CKPS1 = 1;
+
+    // Enable timer 2
+    TMR2ON = 1;
+
+    // Enable PWM output pin since setup is done
+    TRISCbits.TRISC1 = 0;
+    TRISCbits.TRISC2 = 0;
+    
+    TRISDbits.TRISD0 = 0;//low 1
+    LATDbits.LATD0 = 0;
+    TRISDbits.TRISD1 = 0;//in1 high
+    LATDbits.LATD1 = 1;
+    TRISBbits.TRISB3 = 0;//select 1
+    LATBbits.LATB3 = 0;//start with low
+    TRISCbits.TRISC5 = 0; //select 2
+    LATCbits.LATC5 = 0; //start with low
+}
+
+void set_pwm_duty_cycle(unsigned int duty,int wheel_id){
+    if (duty<1023){
+        duty = ((float)duty/1023)*(_PWM_FREQ/(PWM_freq*TMR2PRESCALE));       
+            // Save the duty cycle into the registers
+        if(wheel_id==1){//wheel_id = 1:  right wheel
+            CCP2X = duty & 2; // Set the 2 least significant bit in CCP1CON register
+            CCP2Y = duty & 1;
+            CCPR2L = duty >> 2; // Set rest of the duty cycle bits in CCPR1L
+        }
+        else if(wheel_id==2){
+            CCP1X = duty & 2; // Set the 2 least significant bit in CCP1CON register
+            CCP1Y = duty & 1;
+            CCPR1L = duty >> 2; // Set rest of the duty cycle bits in CCPR1L
+        }
+    }
+}
